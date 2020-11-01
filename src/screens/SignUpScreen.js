@@ -57,8 +57,12 @@ const SignUpScreen = (props) => {
               email: Email,
               password: Password,
             };
-            storeDataJSON(Email, currentUser);
-            props.navigation.navigate("SignIn");
+            if (!currentUser) {
+              storeDataJSON(Email, currentUser);
+              props.navigation.navigate("SignIn");
+            } else {
+              alert("Fields can not be empty");
+            }
           }}
         />
         <Button
