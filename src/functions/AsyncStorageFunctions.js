@@ -13,7 +13,7 @@ const storeDataJSON = async (key, value) => {
   try {
     const jsonValue = JSON.stringify(value);
     await AsyncStorage.setItem(key, jsonValue);
-    alert("Data STored Successfully!");
+    alert("Profile created successfully!");
   } catch (error) {
     alert(error);
   }
@@ -48,7 +48,7 @@ const getDataJSON = async (key) => {
 const removeData = async (key) => {
   try {
     await AsyncStorage.removeItem(key);
-    alert("Data Removed Successfully");
+    alert("User Removed Successfully");
   } catch (error) {
     alert(error);
   }

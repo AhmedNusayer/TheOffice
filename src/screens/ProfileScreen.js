@@ -3,6 +3,8 @@ import { View, StyleSheet, AsyncStorage } from "react-native";
 import { Text, Card, Button, Avatar, Header } from "react-native-elements";
 import { AuthContext } from "../providers/AuthProvider";
 import DatePicker from "react-native-datepicker";
+import { FontAwesome, Feather, AntDesign } from "@expo/vector-icons";
+import { removeData } from "../functions/AsyncStorageFunctions";
 
 const ProfileScreen = (props) => {
   const [date, setDate] = useState("09-10-2020");
@@ -57,6 +59,20 @@ const ProfileScreen = (props) => {
                 {auth.CurrentUser.name}
               </Text>
             </View>
+
+            <View>
+              <Button
+                type="outline"
+                icon={<AntDesign name="user" size={24} color="dodgerblue" />}
+                title="Delete Account"
+                onPress={function () {
+                  removeData(auth.CurrentUser.email);
+                  auth.setIsLoggedIn(false);
+                  //auth.setCurrentUser({});
+                }}
+              />
+            </View>
+
             <View style={styles.container}>
               <Text>Date of Birth</Text>
               <DatePicker
