@@ -19,6 +19,16 @@ const storeDataJSON = async (key, value) => {
   }
 };
 
+const storePostDataJSON = async (key, value) => {
+  try {
+    const jsonValue = JSON.stringify(value);
+    await AsyncStorage.setItem(key, jsonValue);
+    alert("Post created successfully");
+  } catch (error) {
+    alert(error);
+  }
+};
+
 const getData = async (key) => {
   try {
     let data = await AsyncStorage.getItem(key);
@@ -45,6 +55,18 @@ const getDataJSON = async (key) => {
   }
 };
 
+const getPostDataJSON = async (key) => {
+  try {
+    let data = await AsyncStorage.getItem(key);
+    if (data != null) {
+      const jsonData = JSON.parse(data);
+      return jsonData;
+    }
+  } catch (error) {
+    alert("No data with this key!");
+  }
+};
+
 const removeData = async (key) => {
   try {
     await AsyncStorage.removeItem(key);
@@ -54,4 +76,22 @@ const removeData = async (key) => {
   }
 };
 
-export { storeData, storeDataJSON, getData, getDataJSON, removeData };
+const removePostData = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+    alert("Post removed successfully");
+  } catch (error) {
+    alert(error);
+  }
+};
+
+export {
+  storeData,
+  storeDataJSON,
+  getData,
+  getDataJSON,
+  removeData,
+  storePostDataJSON,
+  getPostDataJSON,
+  removePostData,
+};
