@@ -18,6 +18,7 @@ import {
 import PostCard from "./../components/PostCard";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { AuthContext } from "../providers/AuthProvider";
+import { useNetInfo } from "@react-native-community/netinfo";
 import {
   storePostDataJSON,
   getPostDataJSON,
@@ -25,11 +26,17 @@ import {
 } from "../functions/AsyncStorageFunctions";
 
 const HomeScreen = (props) => {
+  const netInfo = useNetInfo();
+  if (netInfo.type != "unknown" && !netInfo.isInternetReachable) {
+    alert("No internet connection!");
+  }
   const [input, setInput] = useState("");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sendRequest, setSendRequest] = useState(false);
 
   const loadPosts = async () => {
+    setLoading(true);
     let tempPosts = [];
     const keys = await AsyncStorage.getAllKeys();
     const items = await AsyncStorage.multiGet(keys);
@@ -39,11 +46,16 @@ const HomeScreen = (props) => {
       });
     }
     setPosts(tempPosts);
+    setLoading(false);
   };
 
   useEffect(() => {
     loadPosts();
-  }, []);
+    if (sendRequest) {
+      //send the request
+      setSendRequest(false);
+    }
+  }, [sendRequest]);
 
   return (
     <AuthContext.Consumer>
@@ -79,6 +91,7 @@ const HomeScreen = (props) => {
               title="Post"
               type="outline"
               onPress={function () {
+                setLoading(true);
                 let postBody = {
                   id: auth.CurrentUser.name,
                   title: "Post Title",
@@ -86,6 +99,8 @@ const HomeScreen = (props) => {
                 };
                 storePostDataJSON(input, postBody);
                 console.log(postBody);
+                setLoading(false);
+                setSendRequest(true);
               }}
             />
             {/* <Button
