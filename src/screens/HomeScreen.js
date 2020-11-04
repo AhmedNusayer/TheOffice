@@ -52,7 +52,6 @@ const HomeScreen = (props) => {
   useEffect(() => {
     loadPosts();
     if (sendRequest) {
-      //send the request
       setSendRequest(false);
     }
   }, [sendRequest]);
