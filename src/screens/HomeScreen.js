@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  AsyncStorage,
 } from "react-native";
 import {
   Card,
@@ -20,10 +21,30 @@ import { AuthContext } from "../providers/AuthProvider";
 import {
   storePostDataJSON,
   getPostDataJSON,
+  removePostData,
 } from "../functions/AsyncStorageFunctions";
 
 const HomeScreen = (props) => {
-  const [Body, setBody] = useState("");
+  const [input, setInput] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadPosts = async () => {
+    let tempPosts = [];
+    const keys = await AsyncStorage.getAllKeys();
+    const items = await AsyncStorage.multiGet(keys);
+    for (let key of keys) {
+      tempPosts.push({
+        data: key,
+      });
+    }
+    setPosts(tempPosts);
+  };
+
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
   return (
     <AuthContext.Consumer>
       {(auth) => (
@@ -51,7 +72,7 @@ const HomeScreen = (props) => {
               placeholder="What's On Your Mind?"
               leftIcon={<Entypo name="pencil" size={24} color="black" />}
               onChangeText={function (currentInput) {
-                setBody(currentInput);
+                setInput(currentInput);
               }}
             />
             <Button
@@ -59,26 +80,39 @@ const HomeScreen = (props) => {
               type="outline"
               onPress={function () {
                 let postBody = {
-                  body: Body,
+                  id: auth.CurrentUser.name,
+                  title: "Post Title",
+                  body: input,
                 };
-                storePostDataJSON(Body, postBody);
-                console.log(postBody.body);
+                storePostDataJSON(input, postBody);
+                console.log(postBody);
               }}
             />
-            <Button
+            {/* <Button
               title="Get"
               type="outline"
               onPress={async function () {
-                let post = await getPostDataJSON(Body);
-                auth.setPostBody(post);
-                console.log(await getPostDataJSON(Body));
+                const keys = await AsyncStorage.getAllKeys();
+                const items = await AsyncStorage.multiGet(keys);
+                for (let key of keys) {
+                  setPosts(await getPostDataJSON(key));
+                }
+                console.log(posts);
               }}
-            />
+            /> */}
           </Card>
-          <PostCard
-            author="Ahmed Nusayer"
-            title="hello world"
-            body={auth.postBody.body}
+
+          <FlatList
+            data={posts}
+            renderItem={({ item }) => {
+              return (
+                <PostCard
+                  author={auth.CurrentUser.name}
+                  title="hello world"
+                  body={item.data}
+                />
+              );
+            }}
           />
         </View>
       )}
