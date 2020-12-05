@@ -40,10 +40,15 @@ const HomeScreen = (props) => {
     let tempPosts = [];
     const keys = await AsyncStorage.getAllKeys();
     const items = await AsyncStorage.multiGet(keys);
+
     for (let key of keys) {
+      myData = await getPostDataJSON(key);
       tempPosts.push({
-        data: key,
+        id: myData.id,
+        title: myData.title,
+        data: myData.body,
       });
+      console.log(myData);
     }
     setPosts(tempPosts);
     setLoading(false);
@@ -121,8 +126,8 @@ const HomeScreen = (props) => {
             renderItem={({ item }) => {
               return (
                 <PostCard
-                  author={auth.CurrentUser.name}
-                  title="hello world"
+                  author={item.id}
+                  title={item.title}
                   body={item.data}
                 />
               );

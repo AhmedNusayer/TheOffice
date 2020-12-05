@@ -11,6 +11,22 @@ import SignInScreen from "./src/screens/SignInScreen";
 
 import { AuthContext, AuthProvider } from "./src/providers/AuthProvider";
 import { Entypo, AntDesign, Ionicons } from "@expo/vector-icons";
+import * as firebase from "firebase";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCS7RSpgDIrOKR4PaHi3fYBb_1FVreVjuI",
+  authDomain: "theoffice-3638d.firebaseapp.com",
+  databaseURL: "https://theoffice-3638d-default-rtdb.firebaseio.com",
+  projectId: "theoffice-3638d",
+  storageBucket: "theoffice-3638d.appspot.com",
+  messagingSenderId: "732422327432",
+  appId: "1:732422327432:web:471f4ef068bd70aa4ca33d",
+};
+// Initialize Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
 const AuthStack = createStackNavigator();
 const HomeTab = createMaterialBottomTabNavigator();
 const AppDrawer = createDrawerNavigator();
