@@ -111,12 +111,7 @@ const HomeScreen = (props) => {
               title="Get"
               type="outline"
               onPress={async function () {
-                const keys = await AsyncStorage.getAllKeys();
-                const items = await AsyncStorage.multiGet(keys);
-                for (let key of keys) {
-                  setPosts(await getPostDataJSON(key));
-                }
-                console.log(posts);
+                AsyncStorage.clear();
               }}
             /> */}
           </Card>
