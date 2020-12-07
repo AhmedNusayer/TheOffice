@@ -5,7 +5,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  AsyncStorage,
+  TouchableOpacity,
 } from "react-native";
 import {
   Card,
@@ -19,7 +19,6 @@ import PostCard from "./../components/PostCard";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { AuthContext } from "../providers/AuthProvider";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { storePostDataJSON } from "../functions/AsyncStorageFunctions";
 import * as firebase from "firebase";
 import "firebase/firestore";
 
@@ -119,24 +118,36 @@ const HomeScreen = (props) => {
                   });
               }}
             />
-            {/* <Button
-              title="Get"
-              type="outline"
-              onPress={async function () {
-                AsyncStorage.clear();
-              }}
-            /> */}
           </Card>
 
           <FlatList
             data={posts}
             renderItem={({ item }) => {
               return (
-                <PostCard
-                  author={item.data.author}
-                  title={item.id}
-                  body={item.data.body}
-                />
+                <TouchableOpacity
+                  onLongPress={() => {
+                    firebase
+                      .firestore()
+                      .collection("posts")
+                      .doc(item.id)
+                      .delete()
+                      .then(function () {
+                        console.log("Document successfully deleted!");
+                      })
+                      .catch(function (error) {
+                        console.error("Error removing document: ", error);
+                      });
+                  }}
+                >
+                  <PostCard
+                    onPress={() => {
+                      alert("longly pressed");
+                    }}
+                    author={item.data.author}
+                    title={item.id}
+                    body={item.data.body}
+                  />
+                </TouchableOpacity>
               );
             }}
           />
