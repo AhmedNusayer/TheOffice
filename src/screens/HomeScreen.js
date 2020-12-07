@@ -19,11 +19,9 @@ import PostCard from "./../components/PostCard";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { AuthContext } from "../providers/AuthProvider";
 import { useNetInfo } from "@react-native-community/netinfo";
-import {
-  storePostDataJSON,
-  getPostDataJSON,
-  removePostData,
-} from "../functions/AsyncStorageFunctions";
+import { storePostDataJSON } from "../functions/AsyncStorageFunctions";
+import * as firebase from "firebase";
+import "firebase/firestore";
 
 const HomeScreen = (props) => {
   const netInfo = useNetInfo();
@@ -37,21 +35,25 @@ const HomeScreen = (props) => {
 
   const loadPosts = async () => {
     setLoading(true);
-    let tempPosts = [];
-    const keys = await AsyncStorage.getAllKeys();
-    const items = await AsyncStorage.multiGet(keys);
-
-    for (let key of keys) {
-      myData = await getPostDataJSON(key);
-      tempPosts.push({
-        id: myData.id,
-        title: myData.title,
-        data: myData.body,
+    firebase
+      .firestore()
+      .collection("posts")
+      .orderBy("created_at", "desc")
+      .onSnapshot((querySnapshot) => {
+        let temp_posts = [];
+        querySnapshot.forEach((doc) => {
+          temp_posts.push({
+            id: doc.id,
+            data: doc.data(),
+          });
+        });
+        setPosts(temp_posts);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        alert(error);
       });
-      console.log(myData);
-    }
-    setPosts(tempPosts);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -96,15 +98,25 @@ const HomeScreen = (props) => {
               type="outline"
               onPress={function () {
                 setLoading(true);
-                let postBody = {
-                  id: auth.CurrentUser.name,
-                  title: "Post Title",
-                  body: input,
-                };
-                storePostDataJSON(input, postBody);
-                console.log(postBody);
-                setLoading(false);
-                setSendRequest(true);
+                firebase
+                  .firestore()
+                  .collection("posts")
+                  .add({
+                    userId: auth.CurrentUser.uid,
+                    body: input,
+                    author: auth.CurrentUser.displayName,
+                    created_at: firebase.firestore.Timestamp.now(),
+                    likes: [],
+                    comments: [],
+                  })
+                  .then(() => {
+                    setLoading(true);
+                    alert("Post created successfully!");
+                  })
+                  .catch((error) => {
+                    setLoading(true);
+                    alert(error);
+                  });
               }}
             />
             {/* <Button
@@ -121,9 +133,9 @@ const HomeScreen = (props) => {
             renderItem={({ item }) => {
               return (
                 <PostCard
-                  author={item.id}
-                  title={item.title}
-                  body={item.data}
+                  author={item.data.author}
+                  title={item.id}
+                  body={item.data.body}
                 />
               );
             }}
