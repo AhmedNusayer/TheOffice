@@ -15,3 +15,5 @@ npm install --save @react-native-community/netinfo
 npm install react-native-datepicker --save
 
 expo install firebase
+
+npm i -S react-native-simple-dialogs

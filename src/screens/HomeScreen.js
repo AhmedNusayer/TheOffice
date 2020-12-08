@@ -6,6 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import {
   Card,
@@ -31,6 +32,7 @@ const HomeScreen = (props) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sendRequest, setSendRequest] = useState(false);
+  const [dialogVisible, setDialougeVisible] = useState(true);
 
   const loadPosts = async () => {
     setLoading(true);
@@ -126,17 +128,30 @@ const HomeScreen = (props) => {
               return (
                 <TouchableOpacity
                   onLongPress={() => {
-                    firebase
-                      .firestore()
-                      .collection("posts")
-                      .doc(item.id)
-                      .delete()
-                      .then(function () {
-                        console.log("Document successfully deleted!");
-                      })
-                      .catch(function (error) {
-                        console.error("Error removing document: ", error);
-                      });
+                    Alert.alert(
+                      "Delete?",
+                      "Are you sure to delete this post?",
+                      [
+                        {
+                          text: "Yes",
+                          onPress: () =>
+                            firebase
+                              .firestore()
+                              .collection("posts")
+                              .doc(item.id)
+                              .delete()
+                              .then(function () {
+                                console.log("Document successfully deleted!");
+                              })
+                              .catch(function (error) {
+                                console.error(
+                                  "Error removing document: ",
+                                  error
+                                );
+                              }),
+                        },
+                      ]
+                    );
                   }}
                 >
                   <PostCard
