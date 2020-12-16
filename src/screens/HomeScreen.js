@@ -107,12 +107,13 @@ const HomeScreen = (props) => {
                     body: input,
                     author: auth.CurrentUser.displayName,
                     created_at: firebase.firestore.Timestamp.now(),
-                    likes: [],
+                    likes: 0,
                     comments: [],
                   })
                   .then(() => {
                     setLoading(true);
-                    alert("Post created successfully!");
+                    alert(auth.CurrentUser.uid);
+                    //alert("Post created successfully!");
                   })
                   .catch((error) => {
                     setLoading(true);
