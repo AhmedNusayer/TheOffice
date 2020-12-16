@@ -43,7 +43,6 @@ const PostCard = (props) => {
             <Button
               onPress={() => {
                 setLikes(likes + 1);
-                alert("pressed");
               }}
               type="outline"
               title={" Likes " + likes}

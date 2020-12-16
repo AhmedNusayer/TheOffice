@@ -112,7 +112,19 @@ const HomeScreen = (props) => {
                   })
                   .then(() => {
                     setLoading(true);
-                    alert(auth.CurrentUser.uid);
+                    firebase
+                      .firestore()
+                      .collection("posts")
+                      .onSnapshot((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                          if (doc.data().body == input) {
+                            alert(doc.id);
+                          }
+                        });
+                      });
+                    // const data = ref.docs.map((doc) => {
+                    //   return { id: doc.id, data: doc.data() };
+                    // });
                     //alert("Post created successfully!");
                   })
                   .catch((error) => {
